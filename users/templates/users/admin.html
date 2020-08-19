@@ -1,0 +1,547 @@
+{% extends 'scheduler/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+<div class="row super-rows">
+
+    <div class="col-md-6 container">
+
+        <div class="admin-forms">
+
+            <form class="form" method="post">
+                {% csrf_token %}
+                <fieldset class="form-group">
+
+                    <legend class="border-bottom mb-4">Add new Technician</legend>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-4 mb-0">
+                            {{ Userform.first_name|as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-4 mb-0">
+                            {{ Userform.middle_name|as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-4 mb-0">
+                            {{ Userform.last_name|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            {{ Userform.email|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 mb-0">
+                            {{ Userform.is_staff|as_crispy_field }}
+                            <small id="hint_id_is_superuser" class="form-text text-muted">Designates that this user is a
+                                staff without having superuser permissions.
+                            </small>
+                        </div>
+                        <div class="form-group col-md-6 mb-0">
+                            {{ Userform.is_superuser|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 mb-0">
+                            {{ Userform.password1|as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-6 mb-0">
+                            {{ Userform.password2|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-lg btn-danger" type="submit">Add User</button>
+                    </div>
+
+                </fieldset>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+        <div class="admin-tables">
+
+            <p>Technicians</p>
+
+            <table class="table table-striped table-bordered admin-table my-5">
+                <thead class="bg-danger">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Active Tickets</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{user.first_name}} {{user.middle_name}} {{user.last_name}}</td>
+                    <td>{{user.email}}</td>
+                    <td>
+                        <select class="form-control">
+                            {% for ticket in tickets %}
+                            {% if ticket.staff_assigned == user %}
+                            <option value="">{{ticket.subject}}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row super-rows">
+
+    <div class="col-md-6 container">
+
+        <div class="admin-forms">
+
+            <form action="" class="form" method="post">
+                {% csrf_token %}
+                <fieldset class="form-group">
+
+                    <legend class="border-bottom mb-4">Add new Skill</legend>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            {{ SkillForm.skill_type|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            {{ SkillForm.skilled_staff|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button name="Skill-form" class="btn btn-lg btn-danger" type="submit">Add New Skill</button>
+                    </div>
+
+                </fieldset>
+
+            </form>
+
+            <form action="" class="form" method="post">
+                {% csrf_token %}
+                <fieldset class="form-group">
+
+                    <legend class="border-bottom mb-4">Add Technician to Skill</legend>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            <select name="skillID" id="" class="form-control">
+                                {% for skill in skills %}
+                                <option value="{{skill.id}}">{{skill.skill_type}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            {{ SkillUForm.skilled_staff|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-lg btn-danger" type="submit">Add New Technician to Skill</button>
+                    </div>
+
+                </fieldset>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+        <div class="admin-tables">
+
+            <p>Skills</p>
+
+            <table class="table table-striped table-bordered admin-table">
+                <thead class="bg-danger">
+                <tr>
+                    <th>Skill</th>
+                    <th>Technician</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for skill in skills %}
+                <tr>
+                    <td>{{skill.skill_type}}</td>
+                    <td>
+                        <select class="form-control">
+                            {% for u in skill.skilled_staff.all %}
+                            <option value="">{{u.first_name}} {{u.middle_name}} {{u.last_name}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row super-rows">
+
+    <div class="col-md-6 container">
+
+        <div class="admin-forms">
+
+            <form action="" class="form" method="post">
+                {% csrf_token %}
+                <fieldset class="form-group">
+
+                    <legend class="border-bottom mb-4">Add new Department</legend>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            {{ DepartForm.department_name|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button name="department-form" class="btn btn-lg btn-danger" type="submit">Add Department</button>
+                    </div>
+
+                </fieldset>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+        <div class="admin-tables">
+            <p>Departments</p>
+            <table class="table table-striped table-bordered admin-table">
+                <thead class="bg-danger">
+                <tr>
+                    <th>Department Name</th>
+                    <th>Department Tickets</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for department in departments %}
+                <tr>
+                    <td>
+                        {{department.department_name}}
+                    </td>
+                    <td>
+                        <select class="form-control">
+                            {% for ticket in tickets %}
+                            {% if ticket.user_department == department %}
+                            <option value="">{{ticket.subject}}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<div style="display: none" class="alert alert-success"></div>
+
+<div class="row super-rows">
+
+    <div class="col-md-4 container">
+
+        <div class="admin-forms">
+            <form id="new_email" class="form">
+                <fieldset class="form-group">
+
+                    <legend class="border-bottom mb-4">Update New Request Email</legend>
+
+                    <input type="hidden" name="id" value="{{new_email.id}}">
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-3">
+                            <label for="new_subject">Subject</label>
+                            <input name="subject" id="new_subject" placeholder="Subject" value="{{new_email.subject}}" type="text" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-3">
+                            <label for="new_body">Body</label>
+                            <textarea name="body" id="new_body" rows="10" class="form-control">{{new_email.body}}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button id="new_email_btn" class="btn btn-lg btn-danger" type="button">Update Email</button>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="col-md-4 container">
+        <div class="admin-forms">
+            <form id="update_email" class="form">
+                <fieldset class="form-group">
+
+                    <legend class="border-bottom mb-4">Update Request Email</legend>
+
+                    <input type="hidden" name="id" value="{{update_email.id}}">
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-2">
+                            <label for="update_subject">Subject</label>
+                            <input name="subject" id="update_subject" placeholder="Subject" value="{{update_email.subject}}" type="text" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-2">
+                            <label for="update_body">Body</label>
+                            <textarea name="body" id="update_body" rows="10" class="form-control">{{update_email.body}}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button id="update_email_btn" class="btn btn-lg btn-danger" type="button">Update Email</button>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-4 container">
+        <div class="admin-forms">
+            <form id="close_email" class="form">
+                <fieldset class="form-group">
+
+                    <legend class="border-bottom mb-4">Update Close Request Email</legend>
+
+                    <input type="hidden" name="id" value="{{close_email.id}}">
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-2">
+                            <label for="close_subject">Subject</label>
+                            <input name="subject" id="close_subject" placeholder="Subject" value="{{close_email.subject}}" type="text" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-2">
+                            <label for="close_body">Body</label>
+                            <textarea name="body" id="close_body" rows="10" class="form-control">{{close_email.body}}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button id="close_email_btn" class="btn btn-lg btn-danger" type="button">Update Email</button>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<div class="row super-rows">
+
+    <div class="col-md-12 container">
+
+        <div class="admin-forms">
+            <form id="email-settings" class="form">
+                <fieldset class="form-group">
+
+                    <legend class="border-bottom mb-4">Email Settings</legend>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-3">
+                            <label for="email">Email</label>
+                            <input placeholder="Email to send emails from" class="form-control" type="email" name="email" id="email" value="{{emailSettings.email}}">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6 mb-3">
+                            <label for="smtp">SMTP Server</label>
+                            <input name="smtp" id="smtp" placeholder="eg: smtp.mail.google" value="{{emailSettings.smtp_server}}" type="text" class="form-control">
+                        </div>
+
+                        <div class="form-group col-md-6 mb-3">
+                            <label for="port">Port</label>
+                            <input name="port" id="port" placeholder="eg: 465" value="{{emailSettings.port}}" type="text" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-3">
+                            <label for="password">Password</label>
+                            <input placeholder="Email password" class="form-control" type="password" name="password" id="password" value="{{emailSettings.password}}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button id="email-settings-btn" class="btn btn-lg btn-danger" type="button">Update Settings</button>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+    $(document).ready(function () {
+
+        let alert = $('.alert')
+
+        $('.admin-table').DataTable({
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
+        });
+
+        function alertTimeOut(alertId) {
+            window.setTimeout(function () {
+                $(alertId).fadeTo(2000, 0).slideUp(2000, function () {
+                    $(this).remove();
+                })
+            }, 2000);
+        };
+
+
+        let newEmailForm = $('#new_email')
+        let updateEmail = $('#update_email')
+        let closeEmail = $('#close_email')
+        let emailSettings = $('#email-settings')
+
+        newEmailForm.on("click","#new_email_btn",function (event) {
+
+            $.ajax({
+
+                url: '{% url "update-emails" %}',
+                data: newEmailForm.serialize(),
+                dataType: 'json'
+
+            }).done(function (data) {
+
+                if (data['success']) {
+                    alert.show()
+                    alert.text(data['success'])
+                    alertTimeOut(alert)
+                }
+
+                location.reload()
+            });
+
+        })
+
+        updateEmail.on("click","#update_email_btn",function (event) {
+
+            $.ajax({
+
+                url: '{% url "update-emails" %}',
+                data: updateEmail.serialize(),
+                dataType: 'json'
+
+            }).done(function (data) {
+
+                if (data['success']) {
+                    alert.show()
+                    alert.text(data['success'])
+                    alertTimeOut(alert)
+                }
+
+                location.reload()
+
+            });
+
+        })
+
+        closeEmail.on("click","#close_email_btn",function (event) {
+
+            $.ajax({
+
+                url: '{% url "update-emails" %}',
+                data: closeEmail.serialize(),
+                dataType: 'json'
+
+            }).done(function (data) {
+
+                if (data['success']) {
+                    alert.show()
+                    alert.text(data['success'])
+                    alertTimeOut(alert)
+                }
+
+                location.reload()
+
+            });
+
+        })
+
+        emailSettings.on("click","#email-settings-btn",function (event) {
+
+            $.ajax({
+
+                url: '{% url "email-settings" %}',
+                data: emailSettings.serialize(),
+                dataType: 'json'
+
+            }).done(function (data) {
+
+                if (data['success']) {
+                    alert.show()
+                    alert.text(data['success'])
+                    alertTimeOut(alert)
+                }
+
+                location.reload()
+
+            });
+
+        })
+
+
+
+
+    });
+
+</script>
+
+{% endblock %}

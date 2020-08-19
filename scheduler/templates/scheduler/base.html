@@ -1,0 +1,260 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.7/css/mdb.min.css" rel="stylesheet">
+
+    <!--  DataTables  -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap4.min.css">
+
+    <!--  Font Awesome  -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!--  CharJS  -->
+    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/Chart.css' %}">
+
+    <!--  Main CSS  -->
+    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/main.css' %}">
+
+    {% if title %}
+    <title>{{title}}</title>
+    {% else %}
+    <title>Help Desk</title>
+    {% endif %}
+
+</head>
+<body style="background-color: #ecf0f1">
+
+<nav class="navbar navbar-expand-lg navbar-dark custom-gradient">
+
+    <a class="navbar-brand" href="{% url 'home' %}">Dawn Help-Desk</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+
+            {% if request.user.is_authenticated %}
+
+            <li class="nav-item active">
+                <a class="nav-link waves-effect waves-light" href="{% url 'dash' %}">Dashboard
+                    <span class="sr-only">(current)</span>
+                </a>
+            </li>
+
+            {% if request.user.is_superuser %}
+            <li class="nav-item">
+                <a class="nav-link waves-effect waves-light" href="{% url 'super-panel' %}">Admin
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle waves-effect waves-light" id="navbarDropdownMenuLink"
+                   data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">Tickets
+                </a>
+                <div class="dropdown-menu dropdown-danger" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item waves-effect waves-light" href="{% url 'ticket-list' %}">Manage Tickets</a>
+
+                    <div class="dropdown-divider"></div>
+
+                    {% for ticket in recent_tickets %}
+                    {% if ticket.ticket_status.status != "Close" %}
+                    <a class="bg-dark text-white dropdown-item" href="{% url 'ticket-detail' ticket.id %}">
+                        {% if ticket.ticket_priority.priority == 'Critical' %}
+                        <span class="dot red"></span>
+                        {% elif ticket.ticket_priority.priority == 'High' %}
+                        <span class="dot purple">{{ticket.is_delete}}</span>
+                        {% elif ticket.ticket_priority.priority == 'Medium' %}
+                        <span class="dot blue"></span>
+                        {% else %}
+                        <span class="dot yellow"></span>
+                        {% endif %}
+                        {{ticket.subject}} | {{ticket.date_created|date:"g-A"}}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+
+                    <div class="dropdown-divider"></div>
+
+                    <a class="dropdown-item waves-effect waves-light" href="{% url 'ticket-create' %}">New Ticket</a>
+
+                </div>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle waves-effect waves-light" id="navbarDropdownMenuLink1"
+                   data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">Support Staff
+                </a>
+                <div class="dropdown-menu dropdown-danger" aria-labelledby="navbarDropdownMenuLink">
+
+                    <a class="dropdown-item waves-effect waves-light" href="{% url 'user-profile' %}">Profile</a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <a class="dropdown-item waves-effect waves-light" href="{% url 'ticket-create' %}">New Ticket</a>
+
+                </div>
+            </li>
+
+        </ul>
+
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item navbar-right">
+                    <a class="nav-link waves-effect waves-light" href="{% url 'logout' %}">Logout</a>
+                    <span class="sr-only">(current)</span>
+                </li>
+            </ul>
+        </div>
+
+        <!--        <form class="form-inline">-->
+        <!--            <div class="md-form my-0">-->
+        <!--                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">-->
+        <!--            </div>-->
+        <!--        </form>-->
+
+
+        {% endif %}
+
+    </div>
+
+</nav>
+
+<main role="main">
+    <div class="mx-5 my-5">
+
+        {% if title %}
+
+        <div class="heading-primary mb-5">
+            <p class="heading-primary--text">{{title}}</p>
+            <span id="span-date" class="heading-primary--text-right">Thursday - August - 2019</span>
+            <span id="span-clock" class="heading-primary--text-right-sub">07:06:15 PM</span>
+        </div>
+
+        {% endif %}
+
+        {% if messages %}
+        {% for message in messages %}
+        <div id="main-alert" class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% block content %} {% endblock %}
+    </div>
+</main>
+
+
+<!--  JQuery  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<!--  Datatable  -->
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+
+<!--  Tool Tip  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+
+<!--  Bootstrap JS  -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+<!--  Bootbox  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+
+<!--  Font Awesome  -->
+<script src="https://kit.fontawesome.com/d5c5d5ceb2.js"></script>
+
+<!--  MD-JQuery  -->
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.7/js/mdb.min.js"></script>
+
+<!-- ChartJS -->
+<script type="text/javascript" src="{% static 'scheduler/Chart.js' %}"></script>
+
+<!-- Main JS -->
+<script type="text/javascript" src="{% static 'scheduler/main.js' %}"></script>
+
+<script>
+    $(document).ready(() => {
+
+        $('#datatable').DataTable();
+
+        $('.datatable').DataTable();
+
+        function alertTimeOut(alertId) {
+            window.setTimeout(function () {
+                $(alertId).fadeTo(2000, 0).slideUp(2000, function () {
+                    $(this).remove();
+                })
+            }, 2000);
+        };
+
+        alertTimeOut('#main-alert');
+
+        let clockSpan = $('#span-clock');
+        let dateSpan = $('#span-date');
+        let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
+            'October', 'November', 'December']
+        let date = new Date();
+
+        dateSpan.text(days[date.getDay()] + ' - ' + months[date.getMonth()] + ' - ' + date.getFullYear());
+
+        let timer = () => {
+            let date = new Date();
+            let seconds = date.getSeconds();
+            let minutes = date.getMinutes();
+            let hours24 = date.getHours();
+            let hours = date.getHours();
+            let mid = 'PM';
+
+            if (hours > 12) {
+                hours = hours - 12;
+            }
+
+            if (hours == 0) {
+                hours = 12;
+            }
+
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+
+            if (hours24 < 12) {
+                mid = 'AM';
+            }
+
+            clockSpan.text(hours + " : " + minutes + " : " + seconds + " " + mid)
+        }
+
+        setInterval(timer, 1000)
+
+    })
+</script>
+
+{% block js %}{% endblock %}
+
+</body>
+</html>

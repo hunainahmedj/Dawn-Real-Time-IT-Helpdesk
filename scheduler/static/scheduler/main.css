@@ -1,0 +1,219 @@
+:root {
+  --main-header-color: #33b5e5;
+}
+
+
+.custom-gradient {
+    background: #FF416C;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #FF4B2B, #FF416C); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+.heading-primary {
+    border-bottom: 2px solid black;
+    position: relative;
+}
+
+.heading-primary--text {
+    display: inline-block;
+    font-size: 2rem;
+
+}
+
+.heading-primary--text-right {
+    display: inline-block;
+    float: right;
+    padding-right: .5rem;
+    font-size: 1.2rem;
+    /*display: inline;*/
+}
+
+.heading-primary--text-right-sub {
+    position: absolute;
+    right: 2.8rem;
+    top: 1.8rem;
+    display: inline-block;
+    padding-left: 44px;
+    font-size: 1.2rem;
+}
+
+.heading-primary--icon {
+    font-size: 2rem;
+    float: right;
+    padding-right: 1rem;
+    /*width: 32px;*/
+    /*height: 32px;*/
+    color: red;
+}
+
+.home-link-box {
+    border-right: 2px solid black;
+}
+
+.home-link-box ul li {
+    margin-bottom: 42px;
+}
+
+ul {
+    list-style: none;
+}
+
+.profile-widget--text {
+
+    font-size: 1.4rem;
+
+}
+
+.profile-icon {
+    font-size: 38px;
+    width: 38px;
+    height: 38px;
+    color: #ff3547;
+}
+
+.home-icon--links {
+    /*text-decoration: none;*/
+    /*color: black;*/
+    /*font-size: 1rem;*/
+}
+
+.home-icon {
+    font-size: 58px;
+    width: 58px;
+    height: 58px;
+    margin-right: 3rem;
+    margin-bottom: 20px;
+
+    color: #ff4444;
+}
+
+.home-icon--heading {
+    display: inline-block;
+}
+
+.util-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    color: #CC0000;
+    padding-top: 18px;
+}
+
+
+.knowledge-base--Question {
+    background-color: white;
+    margin: 1rem 2rem;
+    border: 2px solid #ff3547;
+}
+
+
+.knowledge-base--Question-header {
+    background-color: #ff3547;
+}
+
+.knowledge-base--Question-header p {
+    color: white;
+    font-size: 1.4rem;
+    font-style: italic;
+    padding-left: 18px;
+    margin-bottom: 0;
+}
+
+.knowledge-base--Question-header p span {
+    display: inline-block;
+    float: right;
+    margin-right: 12px;
+    margin-top: 6px;
+}
+
+
+.knowledge-base--Answer {
+    padding: 14px 8px 2px 8px;
+    font-size: 1.2rem;
+    /*margin-bottom: 0;*/
+}
+
+.super-rows {
+    border-bottom: 2px dotted black;
+    margin-bottom: 1.8rem;
+}
+
+.admin-forms {
+    margin: 1.5rem 0;
+}
+
+.admin-forms fieldset legend {
+    font-size: 1.8rem;
+}
+
+.admin-tables {
+    margin: 1.5rem 0;
+}
+
+.admin-tables p {
+    display: block;
+    font-size: 1.8rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.admin-tables table {
+    text-align: center;
+}
+
+
+.disabled {
+    cursor: not-allowed;
+    color: black !important;
+}
+
+td.list-links {
+    /*padding-left: 1.8rem;*/
+}
+
+.list-links a {
+    font-size: 1rem;
+    padding-left: 4px;
+}
+
+table.table a {
+    color: #007bff;
+}
+
+
+.dot {
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.red {
+    background-color: red;
+}
+
+.purple {
+    background-color: purple;
+}
+
+.blue {
+    background-color: dodgerblue;
+}
+
+.yellow {
+    background-color: yellow;
+}
+
+.not-active,
+.not-active:hover {
+    cursor: not-allowed;
+    text-decoration: none;
+    color: black;
+}
+
+.icon-float-r {
+    float: right;
+    margin-right: 12px;
+    margin-top: 8px;
+}

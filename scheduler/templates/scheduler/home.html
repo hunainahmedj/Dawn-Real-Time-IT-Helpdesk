@@ -1,0 +1,74 @@
+{% extends 'scheduler/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-md-8">
+            <div class="heading-primary">
+                <p class="heading-primary--text">Dawn Help-Desk</p>
+            </div>
+            <div class="home-link-box my-5 py-5">
+                <ul>
+                    <li>
+                        <i class="fas fa-clipboard-list home-icon"></i>
+                        <div class="home-icon--heading">
+                            <a class="home-icon--links" href="{% url 'ticket-create' %}">Submit Ticket</a>
+                            <p>Submit a ticket and a technician will help you out</p>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-file-contract home-icon"></i>
+                        <div class="home-icon--heading">
+                            <a class="home-icon--links" href="{% url 'ticket-track' %}">Track Ticket</a>
+                            <p>Submit a ticket and a technician will help you out</p>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope-open-text home-icon"></i>
+                        <div class="home-icon--heading">
+                            <a class="home-icon--links" href="{% url 'email' %}">Email Admin</a>
+                            <p>Submit a ticket and a technician will help you out</p>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-book home-icon"></i>
+                        <div class="home-icon--heading">
+                            <a class="home-icon--links" href="{% url 'ticket-track' %}">Knowledge Base</a>
+                            <p>Submit a ticket and a technician will help you out</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="heading-primary">
+                <p class="heading-primary--text">Login as a Technician</p>
+            </div>
+
+            {% if request.user.is_authenticated %}
+            <div class="my-5">
+                <h4>Already logged in</h4>
+            </div>
+            {% else %}
+            <div class="my-5">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-danger">Login</button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock content%}

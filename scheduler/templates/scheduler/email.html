@@ -1,0 +1,65 @@
+{% extends 'scheduler/base.html' %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="email-form">
+    <form method="post" class="form">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="email-subject">Subject</label>
+        <input name="subject" id="email-subject" placeholder="Subject for the email" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="email-userEmail">Your Email</label>
+        <input name="userEmail" id="email-userEmail" placeholder="eg: dawn@dawn.com" type="email" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="email-body">Email Body</label>
+        <textarea name="body" id="email-body" type="text" rows="10" class="form-control"></textarea>
+    </div>
+    <button id="email-btn" class="btn btn-info" type="submit">Send Email</button>
+    </form>
+</div>
+
+</div>
+
+
+{% endblock content %}
+
+{% block js %}
+
+<script>
+
+    // $(document).ready(function () {
+    //
+    //    $('#email-btn').on('click', function (event) {
+    //
+    //
+    //         let subject = $('#email-subject').val()
+    //         let userEmail = $('#email-userEmail').val()
+    //         let body = $('#email-body').val()
+    //
+    //         $.ajax({
+    //
+    //             url: "{% url 'email-admin' %}",
+    //             method: "GET",
+    //             data: { 'subject': subject, 'userEmail': userEmail, 'body': body },
+    //             dataType: 'json'
+    //
+    //         }).done(function (data) {
+    //             if (data['success']) {
+    //                 alert.show()
+    //                 alert.text(data['success'])
+    //                 alertTimeOut(alert)
+    //                 targetRow.remove();
+    //             }
+    //         })
+    //     });
+    //
+    // });
+
+</script>
+
+{% endblock js%}

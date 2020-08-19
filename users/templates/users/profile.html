@@ -1,0 +1,199 @@
+{% extends 'scheduler/base.html' %}
+
+{% block content %}
+
+<div style="display: none" class="alert alert-success"></div>
+
+<div class="row">
+    <div class="col">
+        <div class="border border-danger">
+            <div class="bg-danger text-white pl-3 pt-2 pb-1">
+                <h4 class="d-inline-block">Profile Info</h4>
+                <span class="fas fa-minus icon-float-r" data-toggle="collapse" data-target="#widget-1"></span>
+            </div>
+            <div id="widget-1" class="profile-widget py-3 px-2 collapse show">
+                <!--                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>-->
+                <div class="row justify-content-center text-center">
+                    <div class="col border-right border-danger">
+                        <p class="profile-widget--text">{{request.user.first_name}} {{request.user.middle_name}}
+                            {{request.user.last_name}}</p> <br>
+                        <p><i class="profile-icon fas fa-user-tie"></i></p>
+                    </div>
+                    <div class="col border-right border-danger">
+                        <p class="profile-widget--text">{{request.user.email}}</p> <br>
+                        <p><i class="profile-icon fas fa-envelope-open-text"></i></p>
+                    </div>
+                    <div class="col border-right border-danger">
+                        <p class="profile-widget--text">{{request.user.ticket_set.count}} Tickets Assigned</p> <br>
+                        <p><i class="profile-icon fas fa-ticket-alt"></i></p>
+                    </div>
+                    <div class="col">
+                        <p class="profile-widget--text">4 Tickets</p> <br>
+                        <p><i class="profile-icon fas fa-ticket-alt"></i></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+
+    <div class="col-md-8">
+
+        <div class="container my-5">
+
+            <div class="heading-primary mb-5">
+                <p class="heading-primary--text">Tickets Assigned</p>
+            </div>
+
+            <table class="table table-bordered table-stripped my-5">
+                <thead class="bg-danger">
+                <tr>
+                    <th>Subject</th>
+                    <th>Request By</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for ticket in tickets %}
+                <tr>
+                    <td><a href="{% url 'ticket-detail' ticket.id %}">{{ticket.subject}}</a></td>
+                    <td>{{ticket.username}}</td>
+                    <td>{{ticket.ticket_status}}</td>
+                    <td>{{ticket.ticket_priority}}</td>
+                </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <form id="todo-form" style="display: none;">
+            <fieldset>
+                <legend>New Todo:</legend>
+                <input type="hidden" value="{{request.user.id}}" name="user_id" id="input_id">
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input id="subject" name="subject" class="form-control" placeholder="Subject Here">
+                </div>
+                <div class="form-group">
+                    <label for="body">Body</label>
+                    <textarea id="body" name="body" cols="30" rows="10" class="form-control"></textarea>
+                </div>
+                <button type="submit" id="todo-button" class="btn btn-danger">Add ToDo</button>
+            </fieldset>
+        </form>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="container my-5">
+
+            <div class="heading-primary mb-5">
+                <p class="heading-primary--text">ToDo/Notes</p>
+                <span id="add-todo" class="heading-primary--icon"><i class="fas fa-plus-square"></i></span>
+            </div>
+
+            <div class="todo list-group">
+
+                {% for todo in notes %}
+
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start start">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{todo.todo_name}} <i data-noteId="{{todo.id}}" class="delete-note fas fa-trash-alt"></i></h5>
+                        <small>{{todo.date_created}}</small>
+                    </div>
+                    <p class="mb-1">{{todo.todo}}</p>
+                </a>
+
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock content %}
+
+{% block js %}
+
+
+<script>
+
+    $(document).ready(function () {
+
+        function alertTimeOut(alertId) {
+            window.setTimeout(function () {
+                $(alertId).fadeTo(2000, 0).slideUp(2000, function () {
+                    $(this).remove();
+                })
+            }, 2000);
+        };
+
+        let alert = $('.alert').hide()
+
+
+        const addTodo = $('#add-todo');
+
+        addTodo.on('click', function (event) {
+            $('#todo-form').show()
+        })
+
+        $('#todo-button').on('click', function (event) {
+
+
+            var fromdata = $('#todo-form').serialize()
+
+
+            $.ajax({
+
+                request: 'POST',
+                url: "{% url 'create-todo' %}",
+                data: fromdata,
+                dataType: 'json'
+
+            }).done(function (data) {
+
+                $('#todo-form').hide()
+
+            })
+        });
+
+        $('.todo').on('click', '.delete-note', function (event) {
+            let currentTarget = $(event.currentTarget);
+            let targetRow = currentTarget.closest('a');
+            console.log(targetRow)
+            bootbox.confirm("Are you sure?", function(result){
+                if (result) {
+                    let todoId = currentTarget.attr('data-noteId');
+                    console.log(todoId)
+                    $.ajax({
+                        url: "{% url 'delete-todo' %}",
+                        data: {'todo_id': todoId },
+                        dataType: 'json'
+                    }).done(function (data) {
+                        if (data['success']) {
+                            alert.show()
+                            alert.text(data['success'])
+                            alertTimeOut(alert)
+                            targetRow.remove();
+                        }
+                    })
+                }
+            })
+        })
+
+
+    });
+
+</script>
+
+
+{% endblock js %}

@@ -1,0 +1,205 @@
+{% extends 'scheduler/base.html' %}
+
+
+{% block content %}
+
+<div class="row my-5">
+
+    <div class="col-md-6">
+        <div class="border border-danger">
+            <div class="bg-danger text-white pl-3 pt-2 pb-1">
+                <h4 class="d-inline-block">Ticket Que</h4>
+                <span class="fas fa-minus icon-float-r" data-toggle="collapse" data-target="#widget-1"></span>
+            </div>
+            <div id="widget-1" class="py-3 px-3 collapse show">
+                <div class="row justify-content-center text-center">
+                    <div class="col border-right border-primary">
+                        <h2 class="display-4">{{active_tickets}}</h2> <br>
+                        <p>Current Open</p>
+                    </div>
+                    <div class="col border-right border-primary">
+                        <h2 class="display-4">{{hold_tickets}}</h2> <br>
+                        <p>On Hold</p>
+                    </div>
+                    <div class="col">
+                        <h2 class="display-4">{{due_today}}</h2> <br>
+                        <p>Due Today</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="bg-danger text-white pl-3 pt-2 pb-1">
+            <h4 class="d-inline-block">Activity Log</h4>
+            <span class="fas fa-minus icon-float-r" data-toggle="collapse" data-target="#widget-2"></span>
+        </div>
+        <div id="widget-2" class="border border-danger py-3 px-3 collapse show">
+
+            {% if request.user.is_superuser %}
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="ticket-tab" data-toggle="tab" href="#ticket" role="tab"
+                       aria-controls="ticket"
+                       aria-selected="true">Ticket Logs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="admin-tab" data-toggle="tab" href="#admin" role="tab"
+                       aria-controls="admin"
+                       aria-selected="false">Admin Logs</a>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="ticket" role="tabpanel" aria-labelledby="ticket-tab">
+                    <textarea class="form-control" rows="5" readonly>{{ticket_logs}}</textarea>
+                </div>
+                <div class="tab-pane fade" id="admin" role="tabpanel" aria-labelledby="admin-tab">
+                    <textarea class="form-control" rows="5" readonly>{{admin_logs}}</textarea>
+                </div>
+            </div>
+            {% else %}
+
+            <div class="justify-content-center text-center">
+                <p>Sign in as a superuser to view logs</p>
+                <a href="{% url 'home' %}" class="btn btn-info">Login</a>
+            </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+<div class="row my-5">
+
+    <div class="col-md-6">
+        <div class="bg-danger text-white pl-3 pt-2 pb-1">
+            <h4 class="d-inline-block">Currently Active Users</h4>
+            <span class="fas fa-minus icon-float-r" data-toggle="collapse" data-target="#widget-3"></span>
+
+        </div>
+        <div id="widget-3" class="border border-danger py-3 px-3 collapse show">
+            <table class="table table-striped justify-content-center text-center table-bordered">
+                <thead class="bg-danger">
+                <tr>
+                    <th>Name</th>
+                    <th>Admin</th>
+                    <th>Last Login</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in active_users %}
+                <tr>
+                    <td>{{user.name}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.last_login}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="bg-danger text-white pl-3 pt-2 pb-1">
+            <h4 class="d-inline-block">General Note</h4>
+            <span class="fas fa-minus icon-float-r" data-toggle="collapse" data-target="#widget-4"></span>
+        </div>
+        <div id="widget-4" class="border border-danger py-3 px-3 collapse show">
+            <form action="{% url 'notification' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {% if request.user.is_superuser %}
+                    <textarea name="notif" class="form-control" rows="5" value="{{gen_note}}">{{gen_note}}</textarea>
+                    {% else %}
+                    <textarea class="form-control" rows="5" readonly>{{gen_note}}</textarea>
+                    {% endif %}
+                </div>
+                {% if request.user.is_superuser %}
+                <button type="submit" class="btn btn-danger">Save</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="bg-danger text-white pl-3 pt-2 pb-1">
+            <h4 class="d-inline-block">Demographics</h4>
+            <span class="fas fa-minus icon-float-r" data-toggle="collapse" data-target="#widget-graph"></span>
+        </div>
+
+        <div id="widget-graph" class="border border-danger py-3 px-3 collapse show">
+
+            <div class="row">
+                <div class="col-md-4">
+                    <canvas id="myChart-1" width="400" height="400"></canvas>
+                </div>
+
+                <div class="col-md-4">
+                    <canvas id="myChart-2" width="400" height="400"></canvas>
+                </div>
+
+                <div class="col-md-4">
+                    <canvas id="myChart-3" width="400" height="400"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+{% block js %}
+
+<script>
+
+    let loc = window.location
+    let wsStart = 'ws://'
+    if (loc.protocol == 'https:') {
+        wsStart = 'wss://'
+    }
+    let endpoint = wsStart + loc.host + "/notifications/ticket"
+    let socket = new WebSocket(endpoint)
+
+    socket.onmessage = function (e) {
+
+        let data = JSON.parse(e.data)
+        let ticket = data['ticket']
+        location.reload()
+
+    }
+
+    socket.onopen = function (e) {
+        console.log("open", e)
+    }
+
+    socket.onerror = function (e) {
+        console.log("error", e)
+    }
+
+    socket.onclose = function (e) {
+        console.log("close", e)
+    }
+
+
+</script>
+
+<script>
+
+    $(document).ready(function () {
+
+
+
+    });
+
+</script>
+
+{% endblock js %}

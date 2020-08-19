@@ -1,0 +1,103 @@
+{% extends 'scheduler/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+<div class="row">
+
+    <div class="col-md-6">
+
+        <div class="container my-5">
+
+            <div class="border border-danger">
+
+                <div class="bg-danger text-white pl-3 pt-2 pb-1">
+                    <h5>Submit a ticket</h5>
+                </div>
+
+                <div class="py-3 px-3">
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.subject|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.request_type|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.username|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.email|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.user_department|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        {{ form.location_info|as_crispy_field }}
+                        {{ form.ticket_description|as_crispy_field }}
+
+
+                        <div class="form-group">
+                            <button class="btn btn-lg btn-outline-danger" type="submit">Request</button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-6">
+
+        <div class="knowledge-base container my-5">
+            <div class="border border-danger">
+
+                <div class="knowledge-base--header bg-danger text-white pl-3 pt-2 pb-1">
+                    <h5 class="knowledge-base--header__text">Knowledge Base</h5>
+                </div>
+
+                {% for question in knowledgebase %}
+
+                <div class="knowledge-base--Question justify-content-center">
+
+                    <div class="knowledge-base--Question-header">
+                        <p>{{question.id}} {{question.question}}
+                        <span class="fas fa-minus" data-toggle="collapse" data-target="#widget-{{question.id}}"></span>
+                        </p>
+                    </div>
+
+                    <div id="widget-{{question.id}}" class="knowledge-base--Answer collapse in">
+                        <p>{{question.answer}}</p>
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}
+
+{% block js %}
+
+
+
+{% endblock js %}
+

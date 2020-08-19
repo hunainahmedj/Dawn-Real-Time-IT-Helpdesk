@@ -1,0 +1,20 @@
+{% extends 'scheduler/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+    <form action="{% url 'ticket-track' %}" method="post" class="form">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.ticket_id|as_crispy_field }}
+        </div>
+
+        <div class="form-group">
+            {{ form.email|as_crispy_field }}
+        </div>
+        <button type="submit" class="btn btn-danger">Track</button>
+    </form>
+</div>
+
+{% endblock %}
